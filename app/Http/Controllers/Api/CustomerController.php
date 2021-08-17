@@ -9,7 +9,7 @@ use App\Models\Customer;
 class CustomerController extends Controller
 {
   public function index(Request $request) {
-    $customers = Customer::paginate(20);
+    $customers = Customer::all();
     return response()->json($customers);
   }
   public function show(Request $request, $customer_id) {

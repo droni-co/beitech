@@ -13,7 +13,7 @@ use Carbon\Carbon;
 class OrderController extends Controller
 {
   public function index(Request $request) {
-    $orders = Order::with('customer')->orderBy('creation_date', 'desc');
+    $orders = Order::with('customer', 'order_detail')->orderBy('creation_date', 'desc');
     if($request->from_date) {
       $orders = $orders->where('creation_date', '>=', $request->from_date);
     }
@@ -65,6 +65,7 @@ class OrderController extends Controller
       // recalculate total
       $order->total += $orderDetail->price * $orderDetail->quantity;
     }
+    $order->save();
     return response()->json($order);
   }
 

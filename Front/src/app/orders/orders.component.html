@@ -1,0 +1,74 @@
+<h1 class="pt-5">Orders</h1>
+<div class="row">
+  <div class="col-md-7 mx-auto">
+    <div class="d-flex">
+      <mat-form-field appearance="fill">
+        <mat-label>Customer</mat-label>
+        <mat-select [(ngModel)]="search.customer_id">
+          <mat-option value="0">
+            All
+          </mat-option>
+          <mat-option *ngFor="let customer of customers" [value]="customer.customer_id">
+            {{customer.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>From date</mat-label>
+        <input matInput [matDatepicker]="from_date" [(ngModel)]="search.from_date">
+        <mat-datepicker-toggle matSuffix [for]="from_date"></mat-datepicker-toggle>
+        <mat-datepicker #from_date></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>To date</mat-label>
+        <input matInput [matDatepicker]="to_date" [(ngModel)]="search.to_date">
+        <mat-datepicker-toggle matSuffix [for]="to_date"></mat-datepicker-toggle>
+        <mat-datepicker #to_date></mat-datepicker>
+      </mat-form-field>
+      <div>
+        <button mat-raised-button color="accent" class="py-2" (click)="getOrders()">Filter</button>
+      </div>
+    </div>
+  </div>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Creation Date</th>
+      <th>Order Id</th>
+      <th>Total</th>
+      <th>Address</th>
+      <th>Product</th>
+    </tr>
+  </thead>
+  <tbody *ngIf="orders.data">
+    <tr *ngIf="orders.data.lenght == 0">
+      <td colspan="5" class="text-center">No records found</td>
+    </tr>
+    <tr *ngFor="let order of orders.data">
+      <td>{{ order.creation_date | date }}</td>
+      <td>{{ order.order_id }}</td>
+      <td>{{ order.total | currency }}</td>
+      <td>{{ order.delivery_address }}</td>
+      <td>
+        <ul>
+          <li *ngFor="let product of order.order_detail">
+            x{{ product.quantity }} {{ product.product_description }}
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+  <tbody *ngIf="loading">
+    <tr>
+      <td colspan="5" class="text-center py-5">
+        <mat-spinner class="mx-auto"></mat-spinner>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<mat-paginator [length]="orders.total"
+              [pageSize]="orders.per_page"
+              aria-label="Select page"
+              (page)="paginate($event)">
+</mat-paginator>

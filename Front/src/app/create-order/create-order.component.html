@@ -1,0 +1,77 @@
+<h1 class="pt-5">Create Order</h1>
+
+<mat-form-field class="w-100" appearance="fill">
+  <mat-label>Customer</mat-label>
+  <mat-select [(ngModel)]="orderCustomerId" (selectionChange)="loadCustomer()">
+    <mat-option value="0">
+      Select One
+    </mat-option>
+    <mat-option *ngFor="let customer of customers" [value]="customer.customer_id">
+      {{customer.name}} | {{customer.email}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<div class="text-center py-5" *ngIf="loading">
+  <mat-spinner class="mx-auto"></mat-spinner>
+</div>
+<div class="text-center py-5" *ngIf="saved.order_id">
+  <p>Record saved</p>
+  <h3>Order ID: {{ saved.order_id }}</h3>
+</div>
+<div class="row" *ngIf="actualCustomer.customer_id">
+  <div class="col-md-8">
+    <div class="row">
+      <div class="col-md-6 mb-3" *ngFor="let product of actualCustomer.products">
+        <mat-card>
+          <mat-card-content>
+            <mat-card-title>{{ product.name }}</mat-card-title>
+            <mat-card-subtitle>{{ product.product_description }}</mat-card-subtitle>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="accent" (click)="addProduct(product)">{{ product.price | currency}}</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <h2>Order</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th class="text-end">Subtotal</th>
+          <th width="20"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of orderProducts">
+          <td>
+            {{ product.name }}<br>
+            <small>x1 {{ product.price | currency }}</small>
+          </td>
+          <td class="text-end">
+            <small>x{{ product.quantity }}</small><br>
+            {{ (product.price * product.quantity) | currency}}
+          </td>
+          <td>
+            <button mat-icon-button color="warn" (click)="removeProduct(product.product_id)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="(inBagProducts > 0 && inBagProducts < 6)" class="p-3 text-center border">
+      <div class="mb-3">
+        <mat-form-field class="w-100" appearance="fill">
+          <mat-label>Delivery Address</mat-label>
+          <input matInput placeholder="Ex. PCalle 123" [(ngModel)]="delivery_address">
+        </mat-form-field>
+      </div>
+      <button mat-flat-button color="primary" class="w-100" (click)="storeOrder()">Save Order</button>
+    </div>
+    <p class="text-secondary">Add products to your order. Min 1 and max 5</p>
+  </div>
+  
+</div>
